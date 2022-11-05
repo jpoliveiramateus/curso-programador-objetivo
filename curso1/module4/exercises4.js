@@ -232,6 +232,20 @@ const productHasBeenConsumedMoreThanOnce = (productName) => {
 // 12. Verificar se existe algum produto
 // que foi comprado por mais de um usuário
 
+const someProductWasPurchasedByMoreThanOneUser = () => {
+  const productList = userProducts.map((product) => product.name);
+  const productCountPurchased = productList
+    .reduce((prev, productCurrent) => {
+      if (prev.some(({ product }) => product === productCurrent)) {
+        const indexOfProduct = prev.map((productPrev) => productPrev.product).indexOf(productCurrent);
+        prev[indexOfProduct].quantity += 1;
+        return prev;
+      }
+      return [...prev, { product: productCurrent, quantity: 1 }];
+    }, []);
+  return productCountPurchased.filter(({ quantity }) => quantity > 1);
+}
+
 // 13. Retornar a lista de usuários sem o usuário mais novo da lista.
 
 const usersListWithoutTheLast = (users) => {
