@@ -148,19 +148,49 @@ const userProducts = [
 
 // 1. Encontrar um usuário pelo nome;
 
+const findUserByName = (users, userName) => users.find((user) => user.name.toUpperCase() === userName.toUpperCase())
+
 // 2. Encontrar um usuário pelo valor de uma propriedade qualquer;
 // Dica: a assinatura do método é findUserByPropValue(users, prop, value)
 
+const findUserByPropValue = (users, prop, value) => users.filter((user) => user[prop] === value);
+
 // 3. Encontrar a usuária do sexo feminino com o salário maior.
+
+const higherSalaryByUser = (users) => users.reduce((prev, curr) => curr.salary > prev.salary ? curr : prev);
+
+const findHigherSalaryFemale = (users) => {
+  const femaleUsers = users.filter((user) => user.sex === "f");
+  return higherSalaryByUser(femaleUsers);
+}
 
 // 4. Encontre os usuários de um dado estado e com peso maior
 // que um dado peso;
 
+const findUsersByState = (users, state) => users.filter((user) => user.city.toUpperCase() === state.toUpperCase());
+
+const findUsersByStateAndWeight = (users, state, weight) => {
+  const usersByState = findUsersByState(users, state);
+  const usersWithGreaterWeight = usersByState.filter((user) => user.weight > weight);
+  return usersWithGreaterWeight;
+}
+
 // 5. Encontre os usuários de um dado estado ou que são casados;
+
+const usersMarried = (users) => users.filter((user) => user.married);
+
+const findUsersByStateWhoAreMarried = (users, state) => {
+  const usersByState = findUsersByState(users, state);
+  return usersMarried(usersByState);
+}
 
 // 6. Cria uma função que recebe a lista de usuários e retorna
 // uma lista com o IMC dos respectivos usuários;
 // OBS: imc = peso/(altura x altura)
+
+const calculateIMC = (weight, height) => parseFloat((weight / (height * height)).toFixed(2));
+
+const calculateUsersIMC = (users) => users.map((user) => ({ name: user.name, IMC: calculateIMC(user.weight, user.height) }));
 
 // 7. Cria uma função que recebe a lista de usuários e retorna
 // a lista dos nomes completos capitalizados;
@@ -171,9 +201,22 @@ const userProducts = [
 // um nome completo, com mais de uma palavra.
 // Usar: split e join e a função da dica1
 
+const uppercaseWord = (word) => word[0].toUpperCase() + word.substring(1);
+
+const uppercaseCompleteName = (name) => name.split(' ').map((word) => uppercaseWord(word)).join(' ');
+
+const usersWithUppercaseName = (users) => users.map((user) => ({ name: uppercaseCompleteName(user.name) }));
+
 // 8. Calcular a média de altura de todos os usuários;
 
+const averageHeightByUsers = (users) => {
+  const totalHeights = users.reduce((prev, curr) => prev + curr.height, 0);
+  return (totalHeights / users.length).toFixed(2);
+}
+
 // 9. Retornar os usuários com altura abaixo da média;
+
+const usersWithBelowAverageHeight = (users) => users.filter((user) => user.height < averageHeightByUsers(users));
 
 // 10. Verificar se um dado produto foi consumido
 // mais de uma vez.
@@ -185,6 +228,11 @@ const userProducts = [
 // que foi comprado por mais de um usuário
 
 // 13. Retornar a lista de usuários sem o usuário mais novo da lista.
+
+const usersListWithoutTheLast = (users) => {
+  const lastUser = users.reduce((prev, curr) => prev.id > curr.id ? prev : curr);
+  return users.filter((user) => user.id !== lastUser.id);
+}
 
 // 14. Retornar um objeto que mapeia usuários pelo próprio
 // id do usuário.
@@ -206,7 +254,11 @@ const userProducts = [
 //   .
 // }
 
+const usersMappedById = (users) => users.map((user) => ({ [user.id]: { ...user } }));
+
 // 15. Contar a quantidade de usuários de uma dada cidade;
+
+const usersCountByCity = (users, city) => users.filter((user) => user.city.toUpperCase() === city.toUpperCase()).length;
 
 // 16. Agrupar usuários pela cidade;
 
