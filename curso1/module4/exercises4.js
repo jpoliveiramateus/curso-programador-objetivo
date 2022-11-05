@@ -221,6 +221,11 @@ const usersWithBelowAverageHeight = (users) => users.filter((user) => user.heigh
 // 10. Verificar se um dado produto foi consumido
 // mais de uma vez.
 
+const productHasBeenConsumedMoreThanOnce = (productName) => {
+  const total = userProducts.reduce((prev, curr) => curr.name === productName ? prev += 1 : prev, 0);
+  return total > 1 ? 'Produto consumido mais de uma vez' : 'Produto consumido apenas uma vez';
+}
+
 // 11. Verificar se um dado produto foi consumido
 // mais de um usuário.
 
@@ -267,6 +272,11 @@ const usersCountByCity = (users, city) => users.filter((user) => user.city.toUpp
 // 18. Obter a média salarial dos usuários por cidade;
 
 // 19. Obter os nomes distintos de produtos;
+
+const getNameDistinctProducts = () => {
+  const productsName = userProducts.map((product) => product.name);
+  return [...new Set(productsName)];
+}
 
 // 20. Retornar os usuários que gastaram mais que preço
 // médio dos produtos vendidos;
