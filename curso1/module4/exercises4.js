@@ -157,11 +157,12 @@ const findUserByPropValue = (users, prop, value) => users.filter((user) => user[
 
 // 3. Encontrar a usuária do sexo feminino com o salário maior.
 
-const higherSalaryByUser = (users) => users.reduce((prev, curr) => curr.salary > prev.salary ? curr : prev);
+const higherSalaryByUser = (users) => users.reduce((prevUser, user) => user.salary > prevUser.salary ? user : prevUser);
 
 const findHigherSalaryFemale = (users) => {
   const femaleUsers = users.filter((user) => user.sex === "f");
-  return higherSalaryByUser(femaleUsers);
+  const higherSalaryFemale = higherSalaryByUser(femaleUsers);
+  return higherSalaryFemale;
 }
 
 // 4. Encontre os usuários de um dado estado e com peso maior
@@ -210,8 +211,9 @@ const usersWithUppercaseName = (users) => users.map((user) => ({ name: uppercase
 // 8. Calcular a média de altura de todos os usuários;
 
 const averageHeightByUsers = (users) => {
-  const totalHeights = users.reduce((prev, curr) => prev + curr.height, 0);
-  return (totalHeights / users.length).toFixed(2);
+  const totalHeights = users.reduce((total, user) => total += user.height, 0);
+  const average = (totalHeights / users.length).toFixed(2);
+  return average;
 }
 
 // 9. Retornar os usuários com altura abaixo da média;
@@ -222,7 +224,7 @@ const usersWithBelowAverageHeight = (users) => users.filter((user) => user.heigh
 // mais de uma vez.
 
 const productHasBeenConsumedMoreThanOnce = (productName) => {
-  const total = userProducts.reduce((prev, curr) => curr.name === productName ? prev += 1 : prev, 0);
+  const total = userProducts.reduce((total, product) => product.name === productName ? total += 1 : total, 0);
   return total > 1 ? 'Produto consumido mais de uma vez' : 'Produto consumido apenas uma vez';
 }
 
@@ -232,24 +234,10 @@ const productHasBeenConsumedMoreThanOnce = (productName) => {
 // 12. Verificar se existe algum produto
 // que foi comprado por mais de um usuário
 
-const someProductWasPurchasedByMoreThanOneUser = () => {
-  const productList = userProducts.map((product) => product.name);
-  const productCountPurchased = productList
-    .reduce((prev, productCurrent) => {
-      if (prev.some(({ product }) => product === productCurrent)) {
-        const indexOfProduct = prev.map((productPrev) => productPrev.product).indexOf(productCurrent);
-        prev[indexOfProduct].quantity += 1;
-        return prev;
-      }
-      return [...prev, { product: productCurrent, quantity: 1 }];
-    }, []);
-  return productCountPurchased.filter(({ quantity }) => quantity > 1);
-}
-
 // 13. Retornar a lista de usuários sem o usuário mais novo da lista.
 
 const usersListWithoutTheLast = (users) => {
-  const lastUser = users.reduce((prev, curr) => prev.id > curr.id ? prev : curr);
+  const lastUser = users.reduce((prevUser, user) => prevUser.id > user.id ? prevUser : user);
   return users.filter((user) => user.id !== lastUser.id);
 }
 
@@ -295,7 +283,46 @@ const getNameDistinctProducts = () => {
 // 20. Retornar os usuários que gastaram mais que preço
 // médio dos produtos vendidos;
 
+const averagePriceProducts = (userProducts) => {
+  const totalPriceProducts = userProducts.reduce((total, product) => total += product.price, 0);
+  return totalPriceProducts / userProducts.length;
+}
+
+const totalSpentByUser = (user, userProducts) => {
+  const listProducts = userProducts.filter((product) => product.userId === user.id);
+  return listProducts.reduce((total, product) => total += product.price, 0);
+}
+
+const usersWhoSpentMoreThanTheAveragePrice = (users) => {
+  const averagePrice = averagePriceProducts(userProducts);
+
+  return users.reduce((newArr, user) => {
+    const totalSpent = totalSpentByUser(user, userProducts);
+    if (totalSpent > averagePrice) newArr.push(user);
+    return newArr;
+  }, []);
+}
+
 // 21. Encontre o userId que menos gastou;
+
+const spentListByUser = (users) => {
+  const spentListByUser = users.map((user) => {
+    const totalSpent = totalSpentByUser(user, userProducts);
+    return { ...user, totalSpent }
+  });
+  return spentListByUser;
+}
+
+const usersWhoSpentTheLeast = (users) => {
+  const listUsers = spentListByUser(users);
+
+  return listUsers.reduce((prev, user) => {
+    if (user.totalSpent < prev.totalSpent) return user
+    return prev;
+  });
+}
+
+// console.log(usersWhoSpentTheLeast(users));
 
 // 22. Encontre o userId que comprou menos produtos, mas
 // que comprou sim algum produto;
@@ -308,6 +335,24 @@ const getNameDistinctProducts = () => {
 // ex: lista1=[{id:2}, {id:3}] e lista2=[{id:3},{id:4}]
 // usuariosComuns => [{id:3}]
 
+const commonUsers = (listOne, listTwo) => {
+  const users = [];
+  listOne.forEach((userListOne) => {
+    if (listTwo.some((userListTwo) => userListOne.id === userListTwo.id)) {
+      users.push(userListOne);
+    }
+  });
+  return users;
+}
+
 // 25. Encontre os usuários não-comuns a duas listas de usuários.
 // ex: lista1=[{id:2}, {id:3}] e lista2=[{id:3},{id:4}]
 // usuariosNaoComuns => [{id:2}, {id:4}]
+
+const nonCommonUsers = (listOne, listTwo) => {
+  const sameUsers = commonUsers(listOne, listTwo);
+  const allUsers = [...listOne, ...listTwo];
+  const differentUsers = allUsers.filter((user) => sameUsers.some((sameUser) => user.id !== sameUser.id));
+
+  return differentUsers;
+}
