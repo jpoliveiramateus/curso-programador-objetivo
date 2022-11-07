@@ -269,9 +269,52 @@ const usersCountByCity = (users, city) => users.filter((user) => user.city.toUpp
 
 // 16. Agrupar usuários pela cidade;
 
+const findCities = (users) => {
+  return users.reduce((newArray, { city }) => {
+    if (!newArray.includes(city)) newArray.push(city)
+    return newArray;
+  }, []);
+}
+
+const groupUsersByCity = (users) => {
+  const cities = findCities(users);
+
+  const usersByCity = cities.reduce((newArray, city) => {
+    newArray.push({ city, users: [] });
+    return newArray;
+  }, []);
+
+  users.forEach((user) => {
+    usersByCity.forEach(({ city, users }) => {
+      if (city === user.city) {
+        users.push(user);
+      }
+    });
+  });
+
+  return usersByCity;
+}
+
 // 17. Contar a quantidade de usuários por cidade;
 
+const quantityUsersByCity = (users) => {
+  const usersByCity = groupUsersByCity(users);
+  const countUsers = usersByCity.map(({ city, users }) => ({ city, users: users.length }));
+  return countUsers;
+}
+
 // 18. Obter a média salarial dos usuários por cidade;
+
+const averageSalary = (users) => {
+  const salaryTotal = users.reduce((total, user) => total += user.salary, 0);
+  const average = salaryTotal / users.length;
+  return Number(average.toFixed(2));
+}
+
+const averageSalaryOfUsersByCity = (users) => {
+  const usersByCity = groupUsersByCity(users);
+  return usersByCity.map(({ city, users }) => ({ city, average: averageSalary(users) }));
+}
 
 // 19. Obter os nomes distintos de produtos;
 
