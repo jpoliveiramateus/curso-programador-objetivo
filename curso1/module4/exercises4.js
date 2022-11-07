@@ -315,14 +315,10 @@ const spentListByUser = (users) => {
 
 const usersWhoSpentTheLeast = (users) => {
   const listUsers = spentListByUser(users);
-
-  return listUsers.reduce((prev, user) => {
-    if (user.totalSpent < prev.totalSpent) return user
-    return prev;
-  });
+  const newListOrdained = listUsers.sort((a, b) => a.totalSpent - b.totalSpent);
+  const firstUser = newListOrdained[0];
+  return firstUser.id;
 }
-
-// console.log(usersWhoSpentTheLeast(users));
 
 // 22. Encontre o userId que comprou menos produtos, mas
 // que comprou sim algum produto;
