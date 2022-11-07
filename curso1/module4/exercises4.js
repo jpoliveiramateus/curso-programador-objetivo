@@ -308,7 +308,7 @@ const usersWhoSpentMoreThanTheAveragePrice = (users) => {
 const spentListByUser = (users) => {
   const spentListByUser = users.map((user) => {
     const totalSpent = totalSpentByUser(user, userProducts);
-    return { ...user, totalSpent }
+    return { ...user, totalSpent };
   });
   return spentListByUser;
 }
@@ -322,6 +322,23 @@ const usersWhoSpentTheLeast = (users) => {
 
 // 22. Encontre o userId que comprou menos produtos, mas
 // que comprou sim algum produto;
+
+const findQuantityPurchasedByUser = (user) => 
+  userProducts.reduce((total, userProduct) => userProduct.userId === user.id ? total += 1 : total, 0);
+
+const findQuantityPurchasedByUsers = (users) => {
+  return users.map((user) => {
+    const quantityPurchased = findQuantityPurchasedByUser(user);
+    return { userId: user.id, quantity: quantityPurchased };
+  });
+}
+
+const findUserWhoBoughtLeastProduct = (users) => {
+  const quantityPurchasedByUsers = findQuantityPurchasedByUsers(users);
+  const userWhoBoughtLeast = quantityPurchasedByUsers
+    .reduce((prevUser, user) => user.quantity < prevUser.quantity && user.quantity > 0 ? user : prevUser);
+  return userWhoBoughtLeast.userId;
+}
 
 // 23. Encontre os usuários (objetos completos)
 // que compraram algum produto;
@@ -351,6 +368,5 @@ const nonCommonUsers = (listOne, listTwo) => {
   const sameUsers = commonUsers(listOne, listTwo);
   const allUsers = [...listOne, ...listTwo];
   const differentUsers = allUsers.filter((user) => sameUsers.some((sameUser) => user.id !== sameUser.id));
-
   return differentUsers;
 }
