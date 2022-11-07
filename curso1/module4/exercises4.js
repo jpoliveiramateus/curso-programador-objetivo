@@ -326,6 +326,8 @@ const usersWhoSpentTheLeast = (users) => {
 // 23. Encontre os usuários (objetos completos)
 // que compraram algum produto;
 
+const findUsersWhoHavePurchasedProduct = () => users.filter((user) => userProducts.some((product) => user.id === product.userId));
+
 // 24. Encontre os usuários comuns a duas listas de usuários.
 // Dois usuários são idênticos, se tiverem o mesmo id;
 // ex: lista1=[{id:2}, {id:3}] e lista2=[{id:3},{id:4}]
