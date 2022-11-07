@@ -351,13 +351,10 @@ const findUsersWhoHavePurchasedProduct = () => users.filter((user) => userProduc
 // usuariosComuns => [{id:3}]
 
 const commonUsers = (listOne, listTwo) => {
-  const users = [];
-  listOne.forEach((userListOne) => {
-    if (listTwo.some((userListTwo) => userListOne.id === userListTwo.id)) {
-      users.push(userListOne);
-    }
-  });
-  return users;
+  return listOne.reduce((newAray, userListOne) => {
+    if (listTwo.some((userListTwo) => userListOne.id === userListTwo.id)) newAray.push(userListOne);
+    return newAray;
+  }, []);
 }
 
 // 25. Encontre os usuários não-comuns a duas listas de usuários.
